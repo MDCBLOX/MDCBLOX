@@ -1,0 +1,688 @@
+
+html_code = '''<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MDCBLOX</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-red: #e63946;
+            --primary-blue: #457b9d;
+            --dark-bg: #1d3557;
+            --card-bg: #f1faee;
+            --text-dark: #1d3557;
+            --text-light: #f1faee;
+            --border: #a8dadc;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #1d3557 0%, #457b9d 100%);
+            min-height: 100vh;
+            color: var(--text-dark);
+        }
+
+        /* Header */
+        header {
+            background: rgba(29, 53, 87, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 0 40px;
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--primary-red);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-light);
+            letter-spacing: 2px;
+        }
+
+        .logo span {
+            color: var(--primary-red);
+        }
+
+        /* Three Dot Menu */
+        .menu-container {
+            position: relative;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            transition: transform 0.3s;
+        }
+
+        .menu-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .menu-btn span {
+            width: 6px;
+            height: 6px;
+            background: var(--text-light);
+            border-radius: 50%;
+            transition: background 0.3s;
+        }
+
+        .menu-btn:hover span {
+            background: var(--primary-red);
+        }
+
+        .dropdown {
+            position: absolute;
+            right: 0;
+            top: 50px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s;
+            border: 2px solid var(--border);
+        }
+
+        .dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            padding: 15px 20px;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 1px solid var(--border);
+            font-weight: 500;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item:hover {
+            background: var(--primary-blue);
+            color: var(--text-light);
+            padding-left: 25px;
+        }
+
+        /* Main Content */
+        main {
+            margin-top: 90px;
+            padding: 30px 40px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Filter Bar */
+        .filter-bar {
+            background: var(--card-bg);
+            padding: 20px 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--primary-red);
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--primary-blue);
+            font-weight: 600;
+        }
+
+        .filter-input {
+            padding: 10px 15px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .filter-input:focus {
+            outline: none;
+            border-color: var(--primary-red);
+            box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.1);
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            border-top: 3px solid var(--primary-blue);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+            border-top-color: var(--primary-red);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--dark-bg);
+        }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-public {
+            background: rgba(69, 123, 157, 0.15);
+            color: var(--primary-blue);
+        }
+
+        .badge-private {
+            background: rgba(230, 57, 70, 0.15);
+            color: var(--primary-red);
+        }
+
+        .card-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .card-desc {
+            color: #555;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        /* Code Editor Section */
+        .editor-section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            border: 2px solid var(--border);
+        }
+
+        .editor-header {
+            background: var(--dark-bg);
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .editor-title {
+            color: var(--text-light);
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .editor-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-run {
+            background: var(--primary-red);
+            color: white;
+        }
+
+        .btn-run:hover {
+            background: #c1121f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(230, 57, 70, 0.4);
+        }
+
+        .btn-clear {
+            background: transparent;
+            color: var(--text-light);
+            border: 2px solid var(--primary-blue);
+        }
+
+        .btn-clear:hover {
+            background: var(--primary-blue);
+        }
+
+        .code-editor {
+            width: 100%;
+            min-height: 300px;
+            padding: 20px;
+            border: none;
+            background: #263238;
+            color: #aed581;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            resize: vertical;
+            outline: none;
+        }
+
+        .code-editor::placeholder {
+            color: #546e7a;
+        }
+
+        .editor-footer {
+            background: #f8f9fa;
+            padding: 12px 25px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4caf50;
+        }
+
+        .status-dot.error {
+            background: var(--primary-red);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            border-top: 4px solid var(--primary-red);
+        }
+
+        .modal-title {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: var(--dark-bg);
+        }
+
+        .modal-text {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .modal-close {
+            background: var(--primary-blue);
+            color: white;
+            padding: 10px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .modal-close:hover {
+            background: var(--dark-bg);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                padding: 0 20px;
+            }
+            
+            main {
+                padding: 20px;
+            }
+            
+            .filter-bar {
+                flex-direction: column;
+            }
+            
+            .filter-group {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">MDC<span>BLOX</span></div>
+        <div class="menu-container">
+            <button class="menu-btn" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="dropdown" id="dropdown">
+                <div class="dropdown-item" onclick="showInfo('Hakkında')">Hakkında</div>
+                <div class="dropdown-item" onclick="showInfo('Ayarlar')">Ayarlar</div>
+                <div class="dropdown-item" onclick="showInfo('Yardım')">Yardım</div>
+                <div class="dropdown-item" onclick="showInfo('Çıkış')">Çıkış</div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Filters -->
+        <div class="filter-bar">
+            <div class="filter-group">
+                <label class="filter-label">Proje Adı</label>
+                <input type="text" class="filter-input" id="nameFilter" placeholder="Ara..." onkeyup="filterProjects()">
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">Zaman</label>
+                <select class="filter-input" id="timeFilter" onchange="filterProjects()">
+                    <option value="all">Tümü</option>
+                    <option value="today">Bugün</option>
+                    <option value="week">Bu Hafta</option>
+                    <option value="month">Bu Ay</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">Görünürlük</label>
+                <select class="filter-input" id="visibilityFilter" onchange="filterProjects()">
+                    <option value="all">Tümü</option>
+                    <option value="public">Herkese Açık</option>
+                    <option value="private">Özel</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="content-grid" id="projectGrid"></div>
+
+        <!-- Code Editor -->
+        <div class="editor-section">
+            <div class="editor-header">
+                <div class="editor-title">
+                    <span>⚡</span>
+                    Kod Editörü
+                </div>
+                <div class="editor-actions">
+                    <button class="btn btn-clear" onclick="clearCode()">Temizle</button>
+                    <button class="btn btn-run" onclick="runCode()">Çalıştır</button>
+                </div>
+            </div>
+            <textarea class="code-editor" id="codeEditor" placeholder="// JavaScript kodunuzu buraya yazın...
+// Örnek:
+console.log('MDCBLOX aktif!');
+
+// Kendi fonksiyonlarınızı tanımlayın:
+function selamla(isim) {
+    return 'Merhaba, ' + isim;
+}
+
+// Mevcut sayfayı değiştirin:
+document.querySelector('.logo').style.color = '#e63946';"></textarea>
+            <div class="editor-footer">
+                <div class="status">
+                    <div class="status-dot" id="statusDot"></div>
+                    <span id="statusText">Hazır</span>
+                </div>
+                <span id="lineCount">0 satır</span>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal" onclick="closeModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <h3 class="modal-title" id="modalTitle">Başlık</h3>
+            <p class="modal-text" id="modalText">İçerik</p>
+            <button class="modal-close" onclick="closeModal()">Kapat</button>
+        </div>
+    </div>
+
+    <script>
+        // Proje Verileri
+        const projects = [
+            { id: 1, name: "E-Ticaret API", desc: "RESTful API. Node.js & Express.", date: Date.now() - 86400000, visibility: "public" },
+            { id: 2, name: "Dashboard UI", desc: "Yönetim paneli arayüzü. React.", date: Date.now() - 604800000, visibility: "private" },
+            { id: 3, name: "Mobil App", desc: "React Native mobil uygulama.", date: Date.now(), visibility: "public" },
+            { id: 4, name: "Database Tool", desc: "Veritabanı yönetim aracı.", date: Date.now() - 2592000000, visibility: "private" },
+        ];
+
+        // Menü Aç/Kapa
+        function toggleMenu() {
+            document.getElementById('dropdown').classList.toggle('active');
+        }
+
+        // Menü dışına tıklayınca kapat
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.menu-container')) {
+                document.getElementById('dropdown').classList.remove('active');
+            }
+        });
+
+        // Modal İşlemleri
+        function showInfo(type) {
+            const modal = document.getElementById('modal');
+            const title = document.getElementById('modalTitle');
+            const text = document.getElementById('modalText');
+            
+            const content = {
+                'Hakkında': 'MDCBLOX - Modern proje yönetim platformu.',
+                'Ayarlar': 'Ayarlar paneli yakında eklenecek.',
+                'Yardım': 'Yardım dokümantasyonu hazırlanıyor.',
+                'Çıkış': 'Oturum kapatıldı.'
+            };
+            
+            title.textContent = type;
+            text.textContent = content[type] || '';
+            modal.classList.add('active');
+            document.getElementById('dropdown').classList.remove('active');
+        }
+
+        function closeModal(e) {
+            if (!e || e.target.id === 'modal') {
+                document.getElementById('modal').classList.remove('active');
+            }
+        }
+
+        // Projeleri Render Et
+        function renderProjects() {
+            const grid = document.getElementById('projectGrid');
+            grid.innerHTML = projects.map(p => {
+                const date = new Date(p.date).toLocaleDateString('tr-TR');
+                const visClass = p.visibility === 'public' ? 'badge-public' : 'badge-private';
+                const visText = p.visibility === 'public' ? 'Herkese Açık' : 'Özel';
+                
+                return `
+                    <div class="card" data-name="${p.name.toLowerCase()}" data-date="${p.date}" data-vis="${p.visibility}">
+                        <div class="card-header">
+                            <div class="card-title">${p.name}</div>
+                            <span class="badge ${visClass}">${visText}</span>
+                        </div>
+                        <div class="card-meta">
+                            <span>📅 ${date}</span>
+                        </div>
+                        <div class="card-desc">${p.desc}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Filtreleme
+        function filterProjects() {
+            const name = document.getElementById('nameFilter').value.toLowerCase();
+            const time = document.getElementById('timeFilter').value;
+            const vis = document.getElementById('visibilityFilter').value;
+            const now = Date.now();
+            
+            document.querySelectorAll('.card').forEach(card => {
+                const cName = card.getAttribute('data-name');
+                const cDate = parseInt(card.getAttribute('data-date'));
+                const cVis = card.getAttribute('data-vis');
+                
+                let show = true;
+                
+                if (name && !cName.includes(name)) show = false;
+                if (vis !== 'all' && cVis !== vis) show = false;
+                
+                if (time !== 'all') {
+                    const diff = now - cDate;
+                    const day = 86400000;
+                    if (time === 'today' && diff > day) show = false;
+                    if (time === 'week' && diff > day * 7) show = false;
+                    if (time === 'month' && diff > day * 30) show = false;
+                }
+                
+                card.style.display = show ? 'block' : 'none';
+            });
+        }
+
+        // Kod Editörü
+        function updateLineCount() {
+            const text = document.getElementById('codeEditor').value;
+            const lines = text.split('\n').length;
+            document.getElementById('lineCount').textContent = lines + ' satır';
+        }
+
+        document.getElementById('codeEditor').addEventListener('input', updateLineCount);
+
+        function clearCode() {
+            document.getElementById('codeEditor').value = '';
+            updateLineCount();
+            setStatus('Temizlendi', true);
+        }
+
+        function runCode() {
+            const code = document.getElementById('codeEditor').value;
+            if (!code.trim()) {
+                setStatus('Kod boş', false);
+                return;
+            }
+            
+            try {
+                const wrapped = `"use strict"; (function() { ${code} })();`;
+                eval(wrapped);
+                setStatus('Başarıyla çalıştırıldı', true);
+            } catch (err) {
+                setStatus('Hata: ' + err.message, false);
+                console.error(err);
+            }
+        }
+
+        function setStatus(msg, success) {
+            const dot = document.getElementById('statusDot');
+            const text = document.getElementById('statusText');
+            text.textContent = msg;
+            dot.className = 'status-dot' + (success ? '' : ' error');
+            
+            setTimeout(() => {
+                text.textContent = 'Hazır';
+                dot.className = 'status-dot';
+            }, 3000);
+        }
+
+        // Klavye Kısayolu
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') runCode();
+        });
+
+        // Başlat
+        renderProjects();
+        updateLineCount();
+    </script>
+</body>
+</html>'''
+
+with open('/mnt/kimi/output/mdcblox_professional.html', 'w', encoding='utf-8') as f:
+    f.write(html_code)
+
+print("✅ Profesyonel MDCBLOX sitesi oluşturuldu!")
+print("📁 Dosya: mdcblox_professional.html")
