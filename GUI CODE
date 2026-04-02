@@ -1,0 +1,842 @@
+
+html_code = '''<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MDCBLOX - Modern Glow Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --neon-blue: #00f3ff;
+            --neon-purple: #bc13fe;
+            --neon-pink: #ff006e;
+            --dark-bg: #0a0a0f;
+            --card-bg: rgba(20, 20, 30, 0.8);
+            --glow-intensity: 20px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--dark-bg);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(188, 19, 254, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 243, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(255, 0, 110, 0.1) 0%, transparent 50%);
+        }
+
+        /* Animated Background Grid */
+        .bg-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Header */
+        header {
+            padding: 30px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(10, 10, 15, 0.8);
+        }
+
+        .logo {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 243, 255, 0.5);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.3); }
+        }
+
+        /* Modern Glow Buttons */
+        .btn {
+            position: relative;
+            padding: 15px 40px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            background: transparent;
+            border: 2px solid var(--neon-blue);
+            border-radius: 50px;
+            cursor: pointer;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 
+                0 0 var(--glow-intensity) rgba(0, 243, 255, 0.3),
+                inset 0 0 20px rgba(0, 243, 255, 0.1);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover {
+            transform: scale(1.15);
+            box-shadow: 
+                0 0 50px rgba(0, 243, 255, 0.8),
+                0 0 100px rgba(0, 243, 255, 0.4),
+                inset 0 0 30px rgba(0, 243, 255, 0.2);
+            border-color: #fff;
+            text-shadow: 0 0 10px rgba(255,255,255,0.8);
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-purple {
+            border-color: var(--neon-purple);
+            box-shadow: 0 0 var(--glow-intensity) rgba(188, 19, 254, 0.3);
+        }
+
+        .btn-purple:hover {
+            box-shadow: 
+                0 0 50px rgba(188, 19, 254, 0.8),
+                0 0 100px rgba(188, 19, 254, 0.4),
+                inset 0 0 30px rgba(188, 19, 254, 0.2);
+        }
+
+        .btn-pink {
+            border-color: var(--neon-pink);
+            box-shadow: 0 0 var(--glow-intensity) rgba(255, 0, 110, 0.3);
+        }
+
+        .btn-pink:hover {
+            box-shadow: 
+                0 0 50px rgba(255, 0, 110, 0.8),
+                0 0 100px rgba(255, 0, 110, 0.4),
+                inset 0 0 30px rgba(255, 0, 110, 0.2);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background: var(--card-bg);
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .filter-title {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: var(--neon-blue);
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .filter-label {
+            font-size: 0.9em;
+            color: rgba(255,255,255,0.7);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .filter-input {
+            padding: 12px 20px;
+            background: rgba(0,0,0,0.3);
+            border: 2px solid rgba(0, 243, 255, 0.3);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1em;
+            transition: all 0.3s;
+            outline: none;
+        }
+
+        .filter-input:focus {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+        }
+
+        select.filter-input {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2300f3ff' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .content-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            border-radius: 20px;
+            padding: 25px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .content-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 243, 255, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s;
+            pointer-events: none;
+        }
+
+        .content-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: var(--neon-blue);
+            box-shadow: 
+                0 20px 60px rgba(0,0,0,0.4),
+                0 0 40px rgba(0, 243, 255, 0.3);
+        }
+
+        .content-card:hover::before {
+            opacity: 1;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: var(--neon-blue);
+        }
+
+        .visibility-badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .visibility-public {
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+            border: 1px solid #00ff88;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+        }
+
+        .visibility-private {
+            background: rgba(255, 0, 110, 0.2);
+            color: var(--neon-pink);
+            border: 1px solid var(--neon-pink);
+            box-shadow: 0 0 10px rgba(255, 0, 110, 0.3);
+        }
+
+        .card-meta {
+            display: flex;
+            gap: 20px;
+            color: rgba(255,255,255,0.6);
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+
+        .card-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .card-description {
+            color: rgba(255,255,255,0.8);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-small {
+            padding: 8px 20px;
+            font-size: 0.85em;
+            border-radius: 25px;
+        }
+
+        /* Script Editor Section */
+        .script-section {
+            margin-top: 50px;
+            background: var(--card-bg);
+            border: 2px solid rgba(188, 19, 254, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(20px);
+        }
+
+        .script-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .script-title {
+            font-size: 1.5em;
+            color: var(--neon-purple);
+            text-shadow: 0 0 10px rgba(188, 19, 254, 0.5);
+        }
+
+        .code-editor {
+            background: #1e1e2e;
+            border: 2px solid rgba(188, 19, 254, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            color: #abb2bf;
+            min-height: 300px;
+            width: 100%;
+            resize: vertical;
+            outline: none;
+            line-height: 1.6;
+        }
+
+        .code-editor:focus {
+            border-color: var(--neon-purple);
+            box-shadow: 0 0 30px rgba(188, 19, 254, 0.2);
+        }
+
+        /* Status Bar */
+        .status-bar {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9em;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #00ff88;
+            box-shadow: 0 0 10px #00ff88;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Hidden Class for Filtering */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 20px;
+                padding: 20px;
+            }
+
+            .logo {
+                font-size: 2em;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0, 243, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--neon-blue);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+
+    <header>
+        <div class="logo">⚡ MDCBLOX</div>
+        <div style="display: flex; gap: 15px;">
+            <button class="btn" onclick="showAlert('Yeni Proje')">+ Yeni Proje</button>
+            <button class="btn btn-purple" onclick="toggleTheme()">🎨 Tema</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <div class="filter-title">🔍 Filtreleme Sistemi</div>
+            <div class="filter-grid">
+                <div class="filter-group">
+                    <label class="filter-label">İsim Ara</label>
+                    <input type="text" class="filter-input" id="nameFilter" placeholder="Proje adı girin..." onkeyup="applyFilters()">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Zaman Aralığı</label>
+                    <select class="filter-input" id="timeFilter" onchange="applyFilters()">
+                        <option value="all">Tüm Zamanlar</option>
+                        <option value="today">Bugün</option>
+                        <option value="week">Bu Hafta</option>
+                        <option value="month">Bu Ay</option>
+                        <option value="year">Bu Yıl</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Görünürlük</label>
+                    <select class="filter-input" id="visibilityFilter" onchange="applyFilters()">
+                        <option value="all">Tümü</option>
+                        <option value="public">Herkese Açık</option>
+                        <option value="private">Özel</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Grid -->
+        <div class="content-grid" id="contentGrid">
+            <!-- Cards will be generated by JavaScript -->
+        </div>
+
+        <!-- Script Editor Section -->
+        <div class="script-section">
+            <div class="script-header">
+                <div class="script-title">🚀 Kendi Kodlarını Ekle</div>
+                <button class="btn btn-pink btn-small" onclick="runCustomScript()">▶ Çalıştır</button>
+            </div>
+            <textarea class="code-editor" id="customScript" placeholder="// JavaScript kodunuzu buraya yazın...
+// Örnek: 
+console.log('Merhaba MDCBLOX!');
+
+// Yeni buton efekti ekleme örneği:
+/*
+const btn = document.createElement('button');
+btn.className = 'btn';
+btn.textContent = 'Benim Butonum';
+btn.style.position = 'fixed';
+btn.style.bottom = '20px';
+btn.style.right = '20px';
+document.body.appendChild(btn);
+*/
+
+// Veya mevcut elementleri değiştirin:
+document.querySelector('.logo').style.color = '#ff006e';
+">// JavaScript kodunuzu buraya yazın...
+// Örnek: 
+console.log('Merhaba MDCBLOX!');
+
+// Kendi fonksiyonlarınızı tanımlayın:
+function myCustomFunction() {
+    alert('Bu benim özel fonksiyonum!');
+}
+
+// Butonlara yeni davranışlar ekleyin:
+document.querySelectorAll('.btn').forEach(btn => {
+    btn.addEventListener('dblclick', () => {
+        btn.style.transform = 'rotate(360deg)';
+        setTimeout(() => btn.style.transform = '', 500);
+    });
+});
+</textarea>
+            <div class="status-bar">
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span id="statusText">Hazır - Kodları düzenleyip çalıştırabilirsiniz</span>
+                </div>
+                <span id="lastRun">Son çalışma: -</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // MDCBLOX - Ana JavaScript Sistemi
+        // ==========================================
+
+        // Örnek Veri Seti
+        const projects = [
+            {
+                id: 1,
+                name: "Neon Dashboard",
+                description: "Modern glow efektli yönetim paneli projesi. React ve Three.js kullanıldı.",
+                date: new Date(Date.now() - 86400000), // Dün
+                visibility: "public",
+                author: "MDC"
+            },
+            {
+                id: 2,
+                name: "Crypto Tracker",
+                description: "Kripto para takip uygulaması. Gerçek zamanlı veri çekme özelliği.",
+                date: new Date(Date.now() - 604800000), // Geçen hafta
+                visibility: "private",
+                author: "MDC"
+            },
+            {
+                id: 3,
+                name: "AI Chat Interface",
+                description: "Yapay zeka sohbet arayüzü. OpenAI API entegrasyonu.",
+                date: new Date(), // Bugün
+                visibility: "public",
+                author: "MDC"
+            },
+            {
+                id: 4,
+                name: "Game Engine",
+                description: "Basit 2D oyun motoru. Canvas API ve fizik motoru.",
+                date: new Date(Date.now() - 2592000000), // Geçen ay
+                visibility: "private",
+                author: "MDC"
+            },
+            {
+                id: 5,
+                name: "Portfolio Site",
+                description: "Kişisel portföy sitesi. GSAP animasyonları.",
+                date: new Date(Date.now() - 172800000), // 2 gün önce
+                visibility: "public",
+                author: "MDC"
+            },
+            {
+                id: 6,
+                name: "E-Commerce API",
+                description: "RESTful API. Node.js, Express, MongoDB stack.",
+                date: new Date(Date.now() - 31536000000), // Geçen yıl
+                visibility: "public",
+                author: "MDC"
+            }
+        ];
+
+        // Kart Oluşturma Fonksiyonu
+        function createCard(project) {
+            const dateStr = project.date.toLocaleDateString('tr-TR');
+            const timeStr = project.date.toLocaleTimeString('tr-TR', {hour: '2-digit', minute:'2-digit'});
+            const visClass = project.visibility === 'public' ? 'visibility-public' : 'visibility-private';
+            const visText = project.visibility === 'public' ? '🌐 Herkese Açık' : '🔒 Özel';
+
+            return `
+                <div class="content-card" data-id="${project.id}" data-name="${project.name.toLowerCase()}" data-visibility="${project.visibility}" data-date="${project.date.getTime()}">
+                    <div class="card-header">
+                        <div class="card-title">${project.name}</div>
+                        <div class="visibility-badge ${visClass}">${visText}</div>
+                    </div>
+                    <div class="card-meta">
+                        <span>📅 ${dateStr}</span>
+                        <span>🕐 ${timeStr}</span>
+                    </div>
+                    <div class="card-description">${project.description}</div>
+                    <div class="card-actions">
+                        <button class="btn btn-small" onclick="viewProject(${project.id})">👁 Görüntüle</button>
+                        <button class="btn btn-purple btn-small" onclick="editProject(${project.id})">✏ Düzenle</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Kartları Render Et
+        function renderCards() {
+            const grid = document.getElementById('contentGrid');
+            grid.innerHTML = projects.map(p => createCard(p)).join('');
+        }
+
+        // Filtreleme Sistemi
+        function applyFilters() {
+            const nameFilter = document.getElementById('nameFilter').value.toLowerCase();
+            const timeFilter = document.getElementById('timeFilter').value;
+            const visibilityFilter = document.getElementById('visibilityFilter').value;
+
+            const cards = document.querySelectorAll('.content-card');
+            const now = Date.now();
+
+            cards.forEach(card => {
+                const name = card.getAttribute('data-name');
+                const visibility = card.getAttribute('data-visibility');
+                const date = parseInt(card.getAttribute('data-date'));
+
+                let show = true;
+
+                // İsim filtresi
+                if (nameFilter && !name.includes(nameFilter)) {
+                    show = false;
+                }
+
+                // Zaman filtresi
+                if (timeFilter !== 'all') {
+                    const diff = now - date;
+                    const day = 86400000;
+                    const week = day * 7;
+                    const month = day * 30;
+                    const year = day * 365;
+
+                    switch(timeFilter) {
+                        case 'today':
+                            if (diff > day) show = false;
+                            break;
+                        case 'week':
+                            if (diff > week) show = false;
+                            break;
+                        case 'month':
+                            if (diff > month) show = false;
+                            break;
+                        case 'year':
+                            if (diff > year) show = false;
+                            break;
+                    }
+                }
+
+                // Görünürlük filtresi
+                if (visibilityFilter !== 'all' && visibility !== visibilityFilter) {
+                    show = false;
+                }
+
+                if (show) {
+                    card.classList.remove('hidden');
+                    // Staggered animation
+                    card.style.animation = 'none';
+                    setTimeout(() => {
+                        card.style.animation = 'fadeIn 0.5s ease forwards';
+                    }, 50);
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        }
+
+        // Özel Script Çalıştırma
+        function runCustomScript() {
+            const code = document.getElementById('customScript').value;
+            const statusText = document.getElementById('statusText');
+            const lastRun = document.getElementById('lastRun');
+
+            statusText.innerHTML = '<span class="loading"></span> Çalıştırılıyor...';
+
+            try {
+                // Güvenli eval - strict mode ile
+                const wrappedCode = `
+                    "use strict";
+                    (function() {
+                        ${code}
+                    })();
+                `;
+                
+                eval(wrappedCode);
+                
+                statusText.innerHTML = '✅ Kod başarıyla çalıştırıldı!';
+                statusText.style.color = '#00ff88';
+                lastRun.textContent = 'Son çalışma: ' + new Date().toLocaleTimeString('tr-TR');
+
+                // 3 saniye sonra normale dön
+                setTimeout(() => {
+                    statusText.innerHTML = 'Hazır - Kodları düzenleyip çalıştırabilirsiniz';
+                    statusText.style.color = '#fff';
+                }, 3000);
+
+            } catch (error) {
+                statusText.innerHTML = '❌ Hata: ' + error.message;
+                statusText.style.color = '#ff006e';
+                console.error('Script Error:', error);
+            }
+        }
+
+        // Yardımcı Fonksiyonlar
+        function showAlert(text) {
+            // Glow efektli alert
+            const alertDiv = document.createElement('div');
+            alertDiv.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(10, 10, 15, 0.95);
+                border: 2px solid var(--neon-blue);
+                border-radius: 20px;
+                padding: 40px;
+                box-shadow: 0 0 60px rgba(0, 243, 255, 0.5);
+                z-index: 1000;
+                text-align: center;
+                backdrop-filter: blur(20px);
+                animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            `;
+            alertDiv.innerHTML = `
+                <h2 style="color: var(--neon-blue); margin-bottom: 20px; text-shadow: 0 0 20px rgba(0,243,255,0.5);">${text}</h2>
+                <p style="margin-bottom: 30px; color: rgba(255,255,255,0.8);">Bu özellik yakında aktif olacak!</p>
+                <button class="btn" onclick="this.parentElement.remove(); document.getElementById('overlay').remove();">Tamam</button>
+            `;
+            
+            const overlay = document.createElement('div');
+            overlay.id = 'overlay';
+            overlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.7);
+                z-index: 999;
+                backdrop-filter: blur(5px);
+            `;
+            
+            document.body.appendChild(overlay);
+            document.body.appendChild(alertDiv);
+        }
+
+        function viewProject(id) {
+            const project = projects.find(p => p.id === id);
+            showAlert(`Proje: ${project.name}`);
+        }
+
+        function editProject(id) {
+            const project = projects.find(p => p.id === id);
+            showAlert(`Düzenleniyor: ${project.name}`);
+        }
+
+        function toggleTheme() {
+            document.body.style.filter = document.body.style.filter === 'hue-rotate(180deg)' ? '' : 'hue-rotate(180deg)';
+        }
+
+        // CSS Animasyon ekle
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            @keyframes popIn {
+                from { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+                to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Sayfa Yüklendiğinde
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCards();
+            
+            // Fare parmağı efekti için touch desteği
+            document.querySelectorAll('.btn, .content-card').forEach(el => {
+                el.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(1.15)';
+                });
+                el.addEventListener('touchend', function() {
+                    this.style.transform = '';
+                });
+            });
+        });
+
+        // Klavye kısayolları
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') {
+                runCustomScript();
+            }
+        });
+    </script>
+</body>
+</html>'''
+
+# Dosyayı kaydet
+with open('/mnt/kimi/output/mdcblox_site.html', 'w', encoding='utf-8') as f:
+    f.write(html_code)
+
+print("✅ MDCBLOX sitesi başarıyla oluşturuldu!")
+print("📁 Dosya konumu: /mnt/kimi/output/mdcblox_site.html")
+print("\n🚀 Özellikler:")
+print("   • Neon glow efektli butonlar (hover'da büyüme + ışık efekti)")
+print("   • İsim, zaman ve görünürlük filtresi")
+print("   • Gerçek zamanlı kod editörü (kendi JS kodlarını çalıştırma)")
+print("   • Mobil uyumlu (touch desteği)")
+print("   • Modern dark tema + animasyonlar")
+print("   • Ctrl+Enter ile kod çalıştırma kısayolu")
